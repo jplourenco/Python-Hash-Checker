@@ -42,35 +42,4 @@ class Hasher(object):
 
     
 
-def compute_string_md5(s):
-    m = hashlib.md5(s.encode('utf-8'))
-    return m.hexdigest()
-
-def compute_string_sha256(s):
-    m = hashlib.sha256(s.encode('utf-8'))
-    return m.hexdigest()
-
-def compute_file_md5(path, sizbuf=4096):
-    m = hashlib.md5()
-
-    with open(path,'rb') as fd:
-        breader = io.BufferedReader(fd)
-        while(breader.peek() != b''):
-            m.update(breader.read(sizbuf))
-
-    return m.hexdigest()
-
-def compute_file_sha256(path, sizbuf=4096):
-    m = hashlib.sha256()
- 
-    with open(path,'rb') as fd:
-        breader = io.BufferedReader(fd)
-        while(breader.peek() != b''):
-            m.update(breader.read(sizbuf))
-
-    
-    return m.hexdigest()
-
-def compare_sha256(file, computed_hash):
-    pass
     
