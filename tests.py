@@ -14,11 +14,6 @@ class test_hashMD5(unittest.TestCase):
         self.assertEqual(hasher.compute_string_md5('The quick brown fox jumps over the lazy dog.'),
             'e4d909c290d0fb1ca068ffaddf22cbd0')
     
-    def test_anacondasha256(self):
-
-        self.assertEqual(hasher.compute_file_sha256('C:\\Users\\Joao\\Downloads\\Anaconda3-4.1.1-Windows-x86_64.exe'),
-            'b4889513dc574f9d6f96db089315d69d293f8b17635da4d2e6eee118dc105f38')
-    
     def test_hasher_class_default(self):
         
         #Invalid, non-string  input should default to sha256
@@ -47,11 +42,6 @@ class test_hashMD5(unittest.TestCase):
         h1 = hasher.Hasher('md5')
         self.assertEqual(h1.compute_hash_string(''),'d41d8cd98f00b204e9800998ecf8427e')
         
-    def test_hasher_file(self):
-
-        h1 = hasher.Hasher()
-        self.assertEqual(h1.compute_hash_file('C:\\Users\\Joao\\Downloads\\Anaconda3-4.1.1-Windows-x86_64.exe'),
-        'b4889513dc574f9d6f96db089315d69d293f8b17635da4d2e6eee118dc105f38')
 
 if __name__ == '__main__':
     unittest.main()
