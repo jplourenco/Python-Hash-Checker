@@ -1,79 +1,44 @@
 import sys
 import hasher
+from argparse import ArgumentParser
 
 
+parser = ArgumentParser()
+
+parser.add_argument('inputs', metavar='inputs', nargs='+')
+parser.add_argument('-s','--string',action = 'store_true', help = 'String inputs')
+parser.add_argument('-a','--alg', help = 'Select hashing algorithm. Defaults to SHA-256')
 
 def main():
-    argc = len(sys.argv)
-    hasher_object = hasher.Hasher()
-    options = ''
-    available_options = set('sm')
-    guaranteed_algorithms = hasher.Hasher.algorithms_guarateed()
     
-    inopt = False
-    method = False
+    parse = parser.parse_args()
+    hasher_object = hasher.Hasher(parse.alg)
 
     try:
-        if sys.argv[1].startswith('-'):
-            inopt = True   
-            options = set(each for each in sys.argv[1].strip('-'))
-            options = options.intersection(available_options)
 
-        if 'm' in options:
-            method = True
-            algorithm = sys.argv[2].strip('\'')
-            hasher_object.set_algorithm(algorithm)
-            
-            if algorithm not in guaranteed_algorithms:
-                print('Invalid/Not Available Algorithm. Defaulting to {}.'.format(hasher_object.algorithm))
-            else:
-                print('Using {}'.format(algorithm))
+        if len(parse.inputs) == 2:
+            print("Two inputs detected, performing hash comparison:")
 
-        string_or_file = True if 's' in options else False
-
-        number_inputs = compute_number_inputs(inopt,method,argc)
-
-        if number_inputs == 2:
-            print("Two inputs detected, performing hash comparison")
-
-            if string_or_file:
-                result = hasher_object.compute_hash_string(sys.argv[argc-2]) == sys.argv[argc-1]
+            if parse.string:
+                result = hasher_object.compute_hash_string(parse.inputs[0]) == parse.inputs[1]
                 return 'OK!' if result else 'NOT OK!'
             
-            result = hasher_object.compute_hash_file(sys.argv[argc-2]) == sys.argv[argc-1]
+            result = hasher_object.compute_hash_file(parse.inputs[0]) == parse.inputs[1]
             return "OK! Hashes match" if result else 'FAIL! Hash mismatch'
 
-        elif number_inputs == 1:
-            
+        elif len(parse.inputs) == 1:
             print("Single input detected, calculating hash")
 
-            if string_or_file:
-                return hasher_object.compute_hash_string(sys.argv[argc-1])
+            if parse.string:
+                return hasher_object.compute_hash_string(parse.inputs[0])
             
-            return hasher_object.compute_hash_file(sys.argv[argc-1])
+            return hasher_object.compute_hash_file(parse.inputs[0])
         else:
-            print("Too many or not enough inputs. Exiting")
+            print("Too many inputs. Exiting")
             return
         
     except FileNotFoundError:
-        return "Cannot find the specified file: {}.".format(sys.argv[argc-1])
-    except IndexError:
-        return "TODO: HELP"
-
-
-def compute_number_inputs(inopt,method,argc):
-    if inopt and method and argc == 5 or \
-             inopt and not method and argc == 4 or \
-             not inopt and not method and argc == 3:
-        return 2
-    elif inopt and method and argc == 4 \
-             or inopt and not method and argc == 3\
-             or not inopt and not method and argc == 2:
-        return 1
-    else:
-        return
-
-
+        return "Cannot find the specified file: {}.".format(parse.inputs[0])
 
 if __name__ == '__main__':
     sys.exit(main())
